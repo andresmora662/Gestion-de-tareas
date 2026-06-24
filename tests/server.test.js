@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { app } from '../server.js'
 
 describe('API de tareas', () => {
@@ -31,5 +31,15 @@ describe('API de tareas', () => {
 
     expect(response.status).toBe(400)
     expect(response.body.message).toBe('El título es obligatorio.')
+  })
+
+  it('debe servir la app en la ruta raíz en producción', async () => {
+    vi.resetModules()
+    process.env.NODE_ENV = 'production'
+
+    const { app: productionApp } = await import('../server.js')
+    const response = await request(productionApp).get('/')
+
+    expect(response.status).toBe(200)
   })
 })

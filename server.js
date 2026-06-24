@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { randomUUID } from 'node:crypto'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -97,9 +98,15 @@ taskRouter.delete('/:id', (req, res) => {
 app.use('/tasks', taskRouter)
 app.use('/api/tasks', taskRouter)
 
-if (process.env.NODE_ENV === 'production') {
+const shouldServeFrontend = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true' || fs.existsSync(distDir)
+
+if (shouldServeFrontend) {
   app.use(express.static(distDir))
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/tasks')) {
+      return next()
+    }
+
     res.sendFile(path.join(distDir, 'index.html'))
   })
 }

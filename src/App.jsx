@@ -16,7 +16,8 @@ function App() {
   const fetchTasks = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/tasks')
+      const baseUrl = import.meta.env.PROD ? '' : '/api'
+      const response = await fetch(`${baseUrl}/tasks`)
       if (!response.ok) {
         throw new Error('No se pudieron cargar las tareas')
       }
@@ -42,7 +43,8 @@ function App() {
     }
 
     try {
-      const response = await fetch('/api/tasks', {
+      const baseUrl = import.meta.env.PROD ? '' : '/api'
+      const response = await fetch(`${baseUrl}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -66,7 +68,8 @@ function App() {
 
   const handleStatusChange = async (taskId, nextStatus) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      const baseUrl = import.meta.env.PROD ? '' : '/api'
+      const response = await fetch(`${baseUrl}/tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: nextStatus }),
@@ -84,7 +87,8 @@ function App() {
 
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      const baseUrl = import.meta.env.PROD ? '' : '/api'
+      const response = await fetch(`${baseUrl}/tasks/${taskId}`, { method: 'DELETE' })
       if (!response.ok) {
         throw new Error('No se pudo eliminar la tarea')
       }
